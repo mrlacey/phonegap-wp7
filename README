@@ -1,3 +1,12 @@
 This is an attempt to implement PhoneGap on Windows Phone 7.
 
 While there are still lots of issues this does show a lot of functionality working
+
+This version targets the "codename mango" version of the tools (also known a v7.1 or v7.5)
+Please note that this this version is still in Beta.
+
+To use this project requires the latest version of the tools (beta 2) from http://www.microsoft.com/download/en/details.aspx?displaylang=en&id=26648
+
+If you already have Visual Studio 2010 installed the tools add the ability to target Windows Phone 7. If you install the tools without Visual Studio 2010 already installed the tools will add the "Express" version of VS2010 which enable the ability to only create Windows Phone 7 projects.
+
+Developers who had pre-registered with Microsoft are able to download a newer version of the tools (the beta 2 refresh / release candidate). Development has been done using this version but the beta2 version (linked above) should work fine.
