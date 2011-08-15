@@ -17,11 +17,15 @@ namespace WP7Gap
 {
     public partial class MainPage : PhoneApplicationPage
     {
+        private readonly Stack<Uri> historyList;
+
         private PhoneGap.NativeExecution native;
 
         public MainPage()
         {
             InitializeComponent();
+
+            this.historyList = new Stack<Uri>();
 
             Loaded += this.MainPage_Loaded;
         }
@@ -30,7 +34,7 @@ namespace WP7Gap
         {
             this.native = new PhoneGap.NativeExecution(ref wb);
 
-            // Load all content files into IsolatedStorage in a separate thread to avoid issues with it taking longer that the system will allow for startup
+            // Load all content files into IsolatedStorage in a separate thread to avoid issues with it taking longer that the system will allow for start up
             var isoLoader = new BackgroundWorker
             {
                 WorkerReportsProgress = false,
@@ -120,6 +124,19 @@ namespace WP7Gap
             this.native.OrientationChanged(e.Orientation.ToString());
 
             base.OnOrientationChanged(e);
+        }
+
+        protected override void OnBackKeyPress(CancelEventArgs e)
+        {
+            // Navigate back through page history if there is any
+            if (this.historyList.Count > 1)
+            {
+                this.historyList.Pop();
+                this.wb.Navigate(this.historyList.Peek());
+                e.Cancel = true;
+            }
+
+            base.OnBackKeyPress(e);
         }
     }
 }
