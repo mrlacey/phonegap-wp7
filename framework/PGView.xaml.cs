@@ -125,11 +125,12 @@ namespace WP7GapClassLib
                 {
                     try
                     {
-                        IsolatedStorageFileStream fileStream = new IsolatedStorageFileStream("DeviceID.txt", FileMode.Open, FileAccess.Read, appStorage);
-
-                        using (StreamReader reader = new StreamReader(fileStream))
+                        using (IsolatedStorageFileStream fileStream = new IsolatedStorageFileStream("DeviceID.txt", FileMode.Open, FileAccess.Read, appStorage))
                         {
-                            deviceUUID = reader.ReadLine();
+                            using (StreamReader reader = new StreamReader(fileStream))
+                            {
+                                deviceUUID = reader.ReadLine();
+                            }
                         }
                     }
                     catch (Exception /*ex*/)
@@ -143,23 +144,27 @@ namespace WP7GapClassLib
                     appStorage.Remove();
 #endif 
 
-                    IsolatedStorageFileStream file = new IsolatedStorageFileStream("DeviceID.txt", FileMode.Create, FileAccess.Write, appStorage);
-                    using (StreamWriter writeFile = new StreamWriter(file))
+                    using (IsolatedStorageFileStream file = new IsolatedStorageFileStream("DeviceID.txt", FileMode.Create, FileAccess.Write, appStorage))
                     {
-                        writeFile.WriteLine(deviceUUID);
-                        writeFile.Close();
+                        using (StreamWriter writeFile = new StreamWriter(file))
+                        {
+                            writeFile.WriteLine(deviceUUID);
+                            writeFile.Close();
+                        }
                     }
-   
                 }
 
                 StreamResourceInfo streamInfo = Application.GetResourceStream(new Uri("GapSourceDictionary.xml", UriKind.Relative));
 
                 if (streamInfo != null)
                 {
-                    StreamReader sr = new StreamReader(streamInfo.Stream);
-                    //This will Read Keys Collection for the xml file
+                    XDocument document;
 
-                    XDocument document = XDocument.Parse(sr.ReadToEnd());
+                    using (StreamReader sr = new StreamReader(streamInfo.Stream))
+                    {
+                        //This will Read Keys Collection for the xml file
+                        document = XDocument.Parse(sr.ReadToEnd());
+                    }
 
                     var files = from results in document.Descendants("FilePath")
                                  select new
