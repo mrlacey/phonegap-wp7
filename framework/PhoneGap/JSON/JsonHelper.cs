@@ -43,19 +43,19 @@ namespace WP7GapClassLib.PhoneGap.JSON
 
             DataContractJsonSerializer ser = new DataContractJsonSerializer(obj.GetType());
 
+            MemoryStream ms = new MemoryStream();
+            ser.WriteObject(ms, obj);
+
+            ms.Position = 0;
+            
             string json = String.Empty;
 
-            using (MemoryStream ms = new MemoryStream())
+            using(StreamReader sr = new StreamReader(ms))
             {
-                ser.WriteObject(ms, obj);
-
-                ms.Position = 0;
-
-                using (StreamReader sr = new StreamReader(ms))
-                {
-                    json = sr.ReadToEnd();
-                }
+                json = sr.ReadToEnd();
             }
+
+            ms.Close();
 
             return json;
 

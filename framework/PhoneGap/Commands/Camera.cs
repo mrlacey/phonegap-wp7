@@ -278,27 +278,27 @@ namespace WP7GapClassLib.PhoneGap.Commands
             }
             try
             {
+
+
+                var isoFile = IsolatedStorageFile.GetUserStoreForApplication();
+
+                if (!isoFile.DirectoryExists(isoFolder))
+                {
+                    isoFile.CreateDirectory(isoFolder);
+                }
+
                 string filePath = System.IO.Path.Combine("/" + isoFolder + "/", imageFileName);
 
-                using (var isoFile = IsolatedStorageFile.GetUserStoreForApplication())
+                using (var stream = isoFile.CreateFile(filePath))
                 {
-                    if (!isoFile.DirectoryExists(isoFolder))
+                    // resize image if Height and Width defined via options 
+                    if (cameraOptions.TargetHeight > 0 && cameraOptions.TargetWidth > 0)
                     {
-                        isoFile.CreateDirectory(isoFolder);
+                        image.SaveJpeg(stream, cameraOptions.TargetWidth, cameraOptions.TargetHeight, 0, cameraOptions.Quality);
                     }
-
-                    using (var stream = isoFile.CreateFile(filePath))
+                    else
                     {
-                        // resize image if Height and Width defined via options 
-                        if (cameraOptions.TargetHeight > 0 && cameraOptions.TargetWidth > 0)
-                        {
-                            image.SaveJpeg(stream, cameraOptions.TargetWidth, cameraOptions.TargetHeight, 0,
-                                           cameraOptions.Quality);
-                        }
-                        else
-                        {
-                            image.SaveJpeg(stream, image.PixelWidth, image.PixelHeight, 0, cameraOptions.Quality);
-                        }
+                        image.SaveJpeg(stream, image.PixelWidth, image.PixelHeight, 0, cameraOptions.Quality);
                     }
                 }
 

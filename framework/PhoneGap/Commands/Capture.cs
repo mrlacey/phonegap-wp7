@@ -649,13 +649,12 @@ namespace WP7GapClassLib.PhoneGap.Commands
             try
             {
 
-                using (var isoFile = IsolatedStorageFile.GetUserStoreForApplication())
+                var isoFile = IsolatedStorageFile.GetUserStoreForApplication();
+
+                using (var imageStream = isoFile.OpenFile(filePath, FileMode.Open, FileAccess.Read))
                 {
-                    using (var imageStream = isoFile.OpenFile(filePath, FileMode.Open, FileAccess.Read))
-                    {
-                        var imageSource = PictureDecoder.DecodeJpeg(imageStream);
-                        return imageSource;
-                    }
+                    var imageSource = PictureDecoder.DecodeJpeg(imageStream);
+                    return imageSource;
                 }
             }
             catch (Exception e)
@@ -679,19 +678,17 @@ namespace WP7GapClassLib.PhoneGap.Commands
             }
             try
             {
+                var isoFile = IsolatedStorageFile.GetUserStoreForApplication();
+
+                if (!isoFile.DirectoryExists(imageFolder))
+                {
+                    isoFile.CreateDirectory(imageFolder);
+                }
                 string filePath = System.IO.Path.Combine("/" + imageFolder + "/", imageFileName);
 
-                using (var isoFile = IsolatedStorageFile.GetUserStoreForApplication())
+                using (var stream = isoFile.CreateFile(filePath))
                 {
-                    if (!isoFile.DirectoryExists(imageFolder))
-                    {
-                        isoFile.CreateDirectory(imageFolder);
-                    }
-
-                    using (var stream = isoFile.CreateFile(filePath))
-                    {
-                        stream.Write(imageBytes, 0, imageBytes.Length);
-                    }
+                    stream.Write(imageBytes, 0, imageBytes.Length);
                 }
 
                 return filePath;
